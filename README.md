@@ -149,3 +149,4 @@ python test.py --data_root ./data/pn --split test --num_point 30000 --batch_size
 ```
 
 如需自定义实验名：修改 `config/train_config.yaml` 中 `experiment.name`，或复制该文件创建新的配置并在训练时指定。
+
