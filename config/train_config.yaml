@@ -1,0 +1,70 @@
+# 肋骨分割训练配置文件
+
+# 模型配置
+model:
+  name: "pointnet2_rib_seg"  # 使用新的肋骨分割模型
+  num_part: 2     # 总分割类别数 (背景 + 肋骨)
+  normal_channel: false  # 是否使用法向量信息
+  use_attention: true  # 是否使用注意力机制
+
+# 数据配置
+data:
+  root: "./data/pn/"
+  npoint: 30000  # 点云点数
+  batch_size: 8  # 批次大小
+  num_workers: 4  # 数据加载线程数
+  pin_memory: true  # 是否使用pin_memory加速
+
+# 训练配置
+training:
+  epochs: 50  # 训练轮数
+  learning_rate: 0.001  # 初始学习率
+  optimizer: "AdamW"  # 优化器类型 (Adam, AdamW, SGD)
+  weight_decay: 1e-4  # 权重衰减
+  step_size: 30  # 学习率衰减步长
+  lr_decay: 0.5  # 学习率衰减率
+  use_augmentation: true  # 是否使用数据增强
+  
+# 早停配置
+early_stopping:
+  patience: 15  # 早停耐心值
+  min_delta: 0.001  # 最小改善阈值
+  restore_best_weights: true  # 是否恢复最佳权重
+
+# 损失函数配置
+loss:
+  use_class_weights: true  # 是否使用类别权重
+  class_weights: [0.1, 1.0]  # 类别权重 [背景, 肋骨]
+  ce_weight: 0.3  # 交叉熵损失权重
+  dice_weight: 0.7  # Dice损失权重
+
+# 设备配置
+device:
+  gpu: "0"  # GPU设备ID
+  cuda_visible_devices: "0"  # 可见GPU设备
+
+# 日志配置
+logging:
+  log_dir: null  # 日志目录 (null表示使用时间戳)
+  save_interval: 10  # 模型保存间隔
+
+# 数据增强配置
+augmentation:
+  use_scale: true  # 是否使用缩放增强
+  use_translate: true  # 是否使用平移增强
+  use_jitter: true  # 是否使用抖动增强
+  scale_range: [0.8, 1.2]  # 缩放范围
+  translate_range: 0.1  # 平移范围
+  jitter_std: 0.01  # 抖动标准差
+
+# 验证配置
+validation:
+  eval_interval: 1  # 验证间隔
+  save_best_only: true  # 是否只保存最佳模型
+  monitor_metric: "dice"  # 监控指标 (dice, iou, accuracy)
+
+# 实验配置
+experiment:
+  name: "ribseg_experiment"  # 实验名称
+  description: "肋骨分割训练"  # 实验描述
+  tags: ["rib", "segmentation", "pointnet++"]  # 实验标签
